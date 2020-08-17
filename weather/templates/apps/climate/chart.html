@@ -3,7 +3,16 @@
 {% block content %}
     
     <div id="container" style="width: 75%;">
-        <canvas id="weather-chart" data-url="{% url 'climate:chart' %}"></canvas>
+        <canvas id="min-weather-chart" data-url="{% url 'climate:chart' %}"></canvas>
+    </div>
+    <div id="container" style="width: 75%;">
+        <canvas id="max-weather-chart" data-url="{% url 'climate:chart' %}"></canvas>
+    </div>
+    <div id="container" style="width: 75%;">
+        <canvas id="avg-weather-chart" data-url="{% url 'climate:chart' %}"></canvas>
+    </div>
+    <div id="container" style="width: 75%;">
+        <canvas id="hum-weather-chart" data-url="{% url 'climate:chart' %}"></canvas>
     </div>
 
     {% include 'includes/script.html' %}
@@ -11,16 +20,30 @@
     <script>
 
         var data_url    = '/api/climate/chart/';
-        var chartData   = []
-        var labels      = []
+
+        var min_temp_data   = [];
+        var max_temp_data   = [];
+        var avg_temp_data   = [];
+        var humidity_data   = [];
+        var min_temp_labels = [];
+        var max_temp_labels = [];
+        var avg_temp_labels = [];
+        var humidity_labels = [];
         $.ajax({
             method  : "GET",
             url     : data_url,
 
             success : function (res_data) {
 
-                labels      = res_data.labels
-                chartData   = res_data.data
+                min_temp_data   = res_data.min_temp_data
+                max_temp_data   = res_data.max_temp_data
+                avg_temp_data   = res_data.avg_temp_data
+                humidity_data   = res_data.humidity_data
+
+                min_temp_labels = res_data.min_temp_labels
+                max_temp_labels = res_data.max_temp_labels
+                avg_temp_labels = res_data.avg_temp_labels
+                humidity_labels = res_data.humidity_labels
 
                 plotChart()
 
@@ -34,14 +57,131 @@
         });
 
         function plotChart() {
-            var ctx = document.getElementById('weather-chart');
-            var myChart = new Chart(ctx, {
+
+            var minCtx = document.getElementById('min-weather-chart');
+            var maxCtx = document.getElementById('max-weather-chart');
+            var avgCtx = document.getElementById('avg-weather-chart');
+            var humCtx = document.getElementById('hum-weather-chart');
+
+            var min_tempChart = new Chart(minCtx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: min_temp_labels,
                     datasets: [{
-                        label: 'Weather Chart by City',
-                        data: chartData,
+                        label: 'Average Min Temp Chart by City',
+                        data: min_temp_data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Average min Temp.'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Cities'
+                            }
+                        }],
+                    }
+                }
+            });
+            var max_tempChart = new Chart(maxCtx, {
+                type: 'line',
+                data: {
+                    labels: max_temp_labels,
+                    datasets: [{
+                        label: 'Average Max Temp Chart by City',
+                        data: max_temp_data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Average Max Temp.'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Cities'
+                            }
+                        }],
+                    }
+                }
+            });
+            var avg_tempChart = new Chart(avgCtx, {
+                type: 'radar',
+                data: {
+                    labels: avg_temp_labels,
+                    datasets: [{
+                        label: 'Weather Average Temp Chart by City',
+                        data: avg_temp_data,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -80,6 +220,62 @@
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Average Temp.'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Cities'
+                            }
+                        }],
+                    }
+                }
+            });
+            var humChart = new Chart(humCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: humidity_labels,
+                    datasets: [{
+                        label: 'Weather Humidity Chart by City',
+                        data: humidity_data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Average Humidity.'
                             }
                         }],
                         xAxes: [{
